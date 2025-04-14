@@ -14,7 +14,7 @@ public class MazeGenerator
 
     Vector2Int currentCell;
 
-    private void start()
+    public MazeCell[,] GetMaze()
     {
         maze = new MazeCell[mazeWidth, mazeHeight];
 
@@ -25,9 +25,9 @@ public class MazeGenerator
                 maze[x, y] = new MazeCell(x, y);
             }
 
-
         }
-
+        CarvePath(startX, startY);
+        return maze;
     }
     List<Direction> directions = new List<Direction> {
        Direction.Up, Direction.Down, Direction.Left, Direction.Right,
@@ -52,7 +52,7 @@ public class MazeGenerator
 
     }
 
-    Vector2Int CheckNeighbour()
+    Vector2Int CheckNeighbours()
     {
         List<Direction> rndDir = GetRandomDirections();
 
@@ -94,12 +94,53 @@ public class MazeGenerator
         }
         else if (primaryCell.y < secondaryCell.y)
         {
-            maze[primaryCell.x, primaryCell.y] topWall = false;
+            maze[primaryCell.x, primaryCell.y].topWall = false;
         }
-
+        else if (primaryCell.x > secondaryCell.x)
+        {
+            maze[secondaryCell.x, secondaryCell.y].topWall = false;
+        }
 
     }
 
+    void CarvePath(int x, int y)
+    {
+        {
+            if (x < 0 || y < 0 || x > mazeWidth - 1 || y > mazeHeight - 1)
+
+                x = y = 0;
+            Debug.LogWarning("Starting posistion is out of bounds, defaulting to 0,0");
+        }
+        currentCell = new Vector2Int(x, y);
+
+        List<Vector2Int> path = new List<Vector2Int>();
+
+        bool deadEnd = false;
+        while (!deadEnd)
+        {
+            Vector2Int nextCell = CheckNeighbours();
+            if (nextCell == currentCell)
+            {
+                for (int i = path.Count - 1; i  >= 0; i--)
+                {
+                    currentCell= path[i];
+                    path.RemoveAt(i);
+                    nextCell = CheckNeighbours();
+
+                    if (nextCell != currentCell) break;
+                }
+                if (nextCell == currentCell)
+                    deadEnd = true;
+
+            } else
+            {
+                BreakWalls(currentCell, nextCell);
+                maze[currentCell.x, currentCell.y].visited = true;
+                currentCell = nextCell;
+                path.Add(nextCell);
+            }
+        }
+    }
     public enum Direction
     {
         Up,
@@ -133,3 +174,4 @@ public class MazeGenerator
             topWall = leftWall = true;
         }
     }
+}
