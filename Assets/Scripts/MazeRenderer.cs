@@ -13,7 +13,8 @@ public class MazeRenderer : MonoBehaviour
     public void Start()
     {
         // Ensure the maze is generated correctly
-        MazeGenerator.MazeCell[,] maze = mazeGenerator.GetMaze(); // Adjusted type
+        MazeGenerator.MazeCell[,] maze = mazeGenerator.GenerateMaze(); //Call the new method
+                                                                       // Adjusted type
 
         // Loop through the maze dimensions
         for (int x = 0; x < mazeGenerator.mazeWidth; x++)

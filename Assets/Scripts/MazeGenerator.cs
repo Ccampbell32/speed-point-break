@@ -9,8 +9,9 @@ public class MazeGenerator : MonoBehaviour
     MazeCell[,] maze;
     Vector2Int currentCell;
 
-    public MazeCell[,] GetMaze()
+    public MazeCell[,] GenerateMaze() //Renamed for clarity
     {
+        //Clear the maze data before generating a new one
         maze = new MazeCell[mazeWidth, mazeHeight];
         for (int x = 0; x < mazeWidth; x++)
         {
@@ -19,9 +20,11 @@ public class MazeGenerator : MonoBehaviour
                 maze[x, y] = new MazeCell(x, y);
             }
         }
+
         //Ensure start position is within bounds
         startX = Mathf.Clamp(startX, 0, mazeWidth - 1);
         startY = Mathf.Clamp(startY, 0, mazeHeight - 1);
+
         CarvePath(startX, startY);
         return maze;
     }
