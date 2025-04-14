@@ -1,11 +1,7 @@
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.UI;
 using UnityEngine;
 
-public class MazeGenerator
+public class MazeGenerator : MonoBehaviour
 {
     [Range(5, 500)]
     public int mazeWidth = 5, mazeHeight = 5; //size of maze
