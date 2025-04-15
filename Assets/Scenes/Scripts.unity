@@ -409,8 +409,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mazeWidth: 50
   mazeHeight: 50
-  startX: 0
-  startY: 0
+  loopProbability: 0.58
+  wallRemovalProbability: 0.8
 --- !u!4 &1593828687
 Transform:
   m_ObjectHideFlags: 0

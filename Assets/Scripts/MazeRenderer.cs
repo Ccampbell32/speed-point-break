@@ -8,7 +8,7 @@ public class MazeRenderer : MonoBehaviour
 
     public void Start()
     {
-        MazeCell[,] maze = mazeGenerator.GenerateMaze();
+        MazeGenerator.MazeCell[,] maze = mazeGenerator.GenerateMaze(); // Fully qualified name here
 
         for (int x = 0; x < mazeGenerator.mazeWidth; x++)
         {
