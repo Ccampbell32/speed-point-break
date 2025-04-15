@@ -9,9 +9,8 @@ public class MazeGenerator : MonoBehaviour
     MazeCell[,] maze;
     Vector2Int currentCell;
 
-    public MazeCell[,] GenerateMaze() //Renamed for clarity
+    public MazeCell[,] GenerateMaze()
     {
-        //Clear the maze data before generating a new one
         maze = new MazeCell[mazeWidth, mazeHeight];
         for (int x = 0; x < mazeWidth; x++)
         {
@@ -21,11 +20,34 @@ public class MazeGenerator : MonoBehaviour
             }
         }
 
-        //Ensure start position is within bounds
         startX = Mathf.Clamp(startX, 0, mazeWidth - 1);
         startY = Mathf.Clamp(startY, 0, mazeHeight - 1);
 
         CarvePath(startX, startY);
+
+        // Ensure outer walls are closed
+        for (int x = 0; x < mazeWidth; x++)
+        {
+            maze[x, 0].topWall = true;
+            maze[x, mazeHeight - 1].topWall = true;
+        }
+        for (int y = 0; y < mazeHeight; y++)
+        {
+            maze[0, y].leftWall = true;
+            maze[mazeWidth - 1, y].leftWall = true;
+        }
+        
+        Debug.Log("Final Maze Wall States:");
+        for (int y = 0; y < mazeHeight; y++)
+        {
+            string row = "";
+            for (int x = 0; x < mazeWidth; x++)
+            {
+                row += $"({x},{y}): T{maze[x, y].topWall}, B{maze[x, y].bottomWall}, L{maze[x, y].leftWall}, R{maze[x, y].rightWall}  ";
+            }
+            Debug.Log(row);
+        }
+
         return maze;
     }
 
@@ -65,7 +87,7 @@ public class MazeGenerator : MonoBehaviour
             }
             if (IsCellValid(neighbour.x, neighbour.y)) return neighbour;
         }
-        return currentCell; //No valid neighbors
+        return currentCell;
     }
 
     void BreakWalls(Vector2Int primaryCell, Vector2Int secondaryCell)
@@ -73,65 +95,89 @@ public class MazeGenerator : MonoBehaviour
         int xDiff = primaryCell.x - secondaryCell.x;
         int yDiff = primaryCell.y - secondaryCell.y;
 
-        if (xDiff == 1) maze[secondaryCell.x, secondaryCell.y].leftWall = false;
-        else if (xDiff == -1) maze[primaryCell.x, primaryCell.y].leftWall = false;
-        else if (yDiff == 1) maze[secondaryCell.x, secondaryCell.y].topWall = false;
-        else if (yDiff == -1) maze[primaryCell.x, primaryCell.y].topWall = false;
+        Debug.Log($"Breaking walls between ({primaryCell.x}, {primaryCell.y}) and ({secondaryCell.x}, {secondaryCell.y})");
+
+        if (xDiff == 1)
+        {
+            maze[primaryCell.x, primaryCell.y].leftWall = false;
+            maze[secondaryCell.x, secondaryCell.y].rightWall = false;
+            Debug.Log($"Left wall of ({primaryCell.x}, {primaryCell.y}) and right wall of ({secondaryCell.x}, {secondaryCell.y}) broken.");
+        }
+        else if (xDiff == -1)
+        {
+            maze[primaryCell.x, primaryCell.y].rightWall = false;
+            maze[secondaryCell.x, secondaryCell.y].leftWall = false;
+            Debug.Log($"Right wall of ({primaryCell.x}, {primaryCell.y}) and left wall of ({secondaryCell.x}, {secondaryCell.y}) broken.");
+        }
+        else if (yDiff == 1)
+        {
+            maze[primaryCell.x, primaryCell.y].topWall = false;
+            maze[secondaryCell.x, secondaryCell.y].bottomWall = false;
+            Debug.Log($"Top wall of ({primaryCell.x}, {primaryCell.y}) and bottom wall of ({secondaryCell.x}, {secondaryCell.y}) broken.");
+        }
+        else if (yDiff == -1)
+        {
+            maze[primaryCell.x, primaryCell.y].bottomWall = false;
+            maze[secondaryCell.x, secondaryCell.y].topWall = false;
+            Debug.Log($"Bottom wall of ({primaryCell.x}, {primaryCell.y}) and top wall of ({secondaryCell.x}, {secondaryCell.y}) broken.");
+        }
     }
+
 
     void CarvePath(int x, int y)
     {
-        currentCell = new Vector2Int(x, y);
-        List<Vector2Int> path = new List<Vector2Int>();
-        bool deadEnd = false;
+        maze[x, y].visited = true;
+        Stack<Vector2Int> stack = new Stack<Vector2Int>();
+        stack.Push(new Vector2Int(x, y));
 
-        while (!deadEnd)
+        while (stack.Count > 0)
         {
-            Vector2Int nextCell = CheckNeighbours();
-            if (nextCell == currentCell) //Dead end
+            Vector2Int current = stack.Peek();
+            List<Direction> unvisitedNeighbors = GetUnvisitedNeighbors(current.x, current.y);
+
+            if (unvisitedNeighbors.Count > 0)
             {
-                if (path.Count > 0)
-                {
-                    currentCell = path[path.Count - 1];
-                    path.RemoveAt(path.Count - 1);
-                }
-                else
-                {
-                    deadEnd = true;
-                }
+                Direction randomNeighbor = unvisitedNeighbors[Random.Range(0, unvisitedNeighbors.Count)];
+                Vector2Int next = current + DirectionToVector(randomNeighbor);
+                BreakWalls(current, next);
+                maze[next.x, next.y].visited = true;
+                stack.Push(next);
+                Debug.Log($"Current: {current}, Next: {next}");
             }
             else
             {
-                BreakWalls(currentCell, nextCell);
-                maze[currentCell.x, currentCell.y].visited = true;
-                currentCell = nextCell;
-                path.Add(currentCell);
+                stack.Pop();
             }
         }
     }
 
+    List<Direction> GetUnvisitedNeighbors(int x, int y)
+    {
+        List<Direction> neighbors = new List<Direction>();
+        if (IsCellValid(x, y + 1)) neighbors.Add(Direction.Up);
+        if (IsCellValid(x, y - 1)) neighbors.Add(Direction.Down);
+        if (IsCellValid(x + 1, y)) neighbors.Add(Direction.Right);
+        if (IsCellValid(x - 1, y)) neighbors.Add(Direction.Left);
+        return neighbors;
+    }
+
+    Vector2Int DirectionToVector(Direction dir)
+    {
+        switch (dir)
+        {
+            case Direction.Up: return new Vector2Int(0, 1);
+            case Direction.Down: return new Vector2Int(0, -1);
+            case Direction.Right: return new Vector2Int(1, 0);
+            case Direction.Left: return new Vector2Int(-1, 0);
+            default: return Vector2Int.zero;
+        }
+    }
+  
     public enum Direction
     {
         Up,
         Down,
         Left,
         Right,
-    }
-
-    public class MazeCell
-    {
-        public bool visited;
-        public int x, y;
-        public bool topWall;
-        public bool leftWall;
-        public Vector2Int position => new Vector2Int(x, y);
-
-        public MazeCell(int x, int y)
-        {
-            this.x = x;
-            this.y = y;
-            visited = false;
-            topWall = leftWall = true;
-        }
     }
 }

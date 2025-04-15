@@ -407,10 +407,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab2ca49e27f260d4ebe0ee4ebfc38216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mazeWidth: 100
+  mazeWidth: 50
   mazeHeight: 50
-  startX: 1
-  startY: 1
+  startX: 0
+  startY: 0
 --- !u!4 &1593828687
 Transform:
   m_ObjectHideFlags: 0

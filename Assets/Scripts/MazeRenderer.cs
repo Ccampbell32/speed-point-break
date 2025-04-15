@@ -1,50 +1,49 @@
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 
 public class MazeRenderer : MonoBehaviour
 {
-    [SerializeField] MazeGenerator mazeGenerator; // Reference to the maze generator
-    [SerializeField] GameObject MazeCellPrefab; // Prefab for maze cells
+    [SerializeField] MazeGenerator mazeGenerator;
+    [SerializeField] GameObject MazeCellPrefab;
+    public float CellSize = 1f;
 
-    public float CellSize = 1f; // Size of each cell
-
-    // Start is called before the first frame update
     public void Start()
     {
-        // Ensure the maze is generated correctly
-        MazeGenerator.MazeCell[,] maze = mazeGenerator.GenerateMaze(); //Call the new method
-                                                                       // Adjusted type
+        MazeCell[,] maze = mazeGenerator.GenerateMaze();
 
-        // Loop through the maze dimensions
         for (int x = 0; x < mazeGenerator.mazeWidth; x++)
         {
             for (int y = 0; y < mazeGenerator.mazeHeight; y++)
             {
-                // Instantiate a new maze cell at the calculated position
-                GameObject newCell = Instantiate(MazeCellPrefab, new Vector3((float)x * CellSize, 0f, (float)y * CellSize), Quaternion.identity, transform);
-
-                // Get the MazeCellObject component from the instantiated prefab
+                GameObject newCell = Instantiate(MazeCellPrefab, new Vector3(x * CellSize, 0f, y * CellSize), Quaternion.identity, transform);
                 MazeCellObject mazeCell = newCell.GetComponent<MazeCellObject>();
 
-                // Check if the maze cell is valid before accessing its properties
+                if (mazeCell == null)
+                {
+                    Debug.LogError("MazeCellObject component missing from prefab!");
+                    continue;
+                }
+
                 if (maze[x, y] != null)
                 {
-                    // Retrieve wall information from the maze cell
-                    bool top = maze[x, y].topWall; // Ensure topWall exists
-                    bool left = maze[x, y].leftWall; // Ensure leftWall exists
-                    bool right = (x == mazeGenerator.mazeWidth - 1); // Right wall is true if it's the last column
-                    bool bottom = (y == 0); // Bottom wall is true if it's the first row
+                    // Correctly use all wall properties
+                    bool top = maze[x, y].topWall;
+                    bool left = maze[x, y].leftWall;
+                    bool right = maze[x, y].rightWall;
+                    bool bottom = maze[x, y].bottomWall;
 
-                    // Initialize the maze cell with wall information
-                    mazeCell.Init(top, bottom, right, left);
+                    mazeCell.Init(top, bottom, left, right);
+
+                    //Debug log for verification (remove later if not needed)
+                    Debug.Log($"Cell ({x}, {y}): Top={top}, Bottom={bottom}, Left={left}, Right={right}");
                 }
                 else
                 {
-                    Debug.LogWarning($"Maze cell at ({x}, {y}) is null.");
+                    Debug.LogError($"Maze data is null at ({x}, {y})!");
                 }
             }
         }
     }
 }
+
+
 

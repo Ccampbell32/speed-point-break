@@ -159,8 +159,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   topWall: {fileID: 796728777512296250}
   bottomWall: {fileID: 5754466991493074607}
-  leftWall: {fileID: 4698329758076053840}
-  rightWall: {fileID: 5716684660117124190}
+  leftWall: {fileID: 5716684660117124190}
+  rightWall: {fileID: 4698329758076053840}
 --- !u!1 &4698329758076053840
 GameObject:
   m_ObjectHideFlags: 0
