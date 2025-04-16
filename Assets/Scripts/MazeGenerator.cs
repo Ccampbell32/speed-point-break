@@ -18,7 +18,6 @@ public class MazeGenerator : MonoBehaviour
         GenerateMaze(); // Generate the maze only once in Awake()
     }
 
-    // Remove the duplicate GenerateMaze() call from Start()
 
     Vector2Int DirectionToVector(Direction dir)
     {
