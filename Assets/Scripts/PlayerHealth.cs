@@ -29,16 +29,17 @@ public class PlayerHealth : MonoBehaviour
             Die();
         }
     }
-
     void Die()
     {
         isDead = true;
-        Debug.Log("Player Died! Activating Game Over UI.");
+        Debug.Log("PlayerHealth: Player Died!");
 
         if (gameOverUI != null)
         {
-            gameOverUI.SetActive(true); // Activate the Game Over UI
+            gameOverUI.SetActive(true);
         }
+
+        Destroy(gameObject);
+        GameManager.Instance.PlayerDied(); // Notify GameManager
     }
 }
-
