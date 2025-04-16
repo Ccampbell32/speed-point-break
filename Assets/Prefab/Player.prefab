@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 7391528219510636367}
   - component: {fileID: 137655468451612114}
   - component: {fileID: 3154342350998742295}
-  - component: {fileID: 3064668487069728535}
   - component: {fileID: 2930665334815684556}
+  - component: {fileID: 3064668487069728535}
   - component: {fileID: 3987301404789357612}
   m_Layer: 0
   m_Name: Player
@@ -114,23 +114,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3064668487069728535
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5862753686456761979}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4cd5bfab2b6fa714ab98748ffac73b44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
-  mouseSensitivity: 2
-  playerCamera: {fileID: 74920490665024443}
-  lookUpLimit: 80
-  lookDownLimit: 80
 --- !u!54 &2930665334815684556
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -158,6 +141,23 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!114 &3064668487069728535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5862753686456761979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cd5bfab2b6fa714ab98748ffac73b44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 5
+  mouseSensitivity: 2
+  playerCamera: {fileID: 74920490665024443}
+  lookUpLimit: 80
+  lookDownLimit: 80
 --- !u!114 &3987301404789357612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,7 +173,6 @@ MonoBehaviour:
   maxHealth: 5
   currentHealth: 0
   isDead: 0
-  gameOverUI: {fileID: 0}
 --- !u!1 &8542405118438822761
 GameObject:
   m_ObjectHideFlags: 0
