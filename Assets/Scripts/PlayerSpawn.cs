@@ -17,7 +17,10 @@ public class PlayerSpawn : MonoBehaviour
     {
         Vector2Int randomCell = GetRandomValidCell();
         Vector3 spawnPosition = new Vector3(randomCell.x * cellSize + cellSize / 2f, 0.5f, randomCell.y * cellSize + cellSize / 2f);
-        Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
+        GameObject playerInstance = Instantiate(playerPrefab, spawnPosition, Quaternion.identity); // Instantiate with identity rotation
+
+        // Explicitly set rotation to 0, 0, 0 to override any parent transforms
+        playerInstance.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
     }
 
     Vector2Int GetRandomValidCell()

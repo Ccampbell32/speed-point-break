@@ -472,9 +472,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speedBreakPointPrefab: {fileID: 948457707456094616, guid: 7e956dd356f3aad4095af6311b57c972, type: 3}
+  enemyPrefab: {fileID: 5726429420187990754, guid: db87affd680e4a440aa7b4fb0a819e06, type: 3}
   mazeGenerator: {fileID: 1593828686}
   numberOfBreakPoints: 5
   cellSize: 1
+  enemySpawnInterval: 30
 --- !u!4 &1616264510
 Transform:
   m_ObjectHideFlags: 0
