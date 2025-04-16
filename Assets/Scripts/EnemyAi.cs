@@ -1,28 +1,51 @@
-
-
 using UnityEngine;
 using System.Collections;
 
 public class EnemyAI : MonoBehaviour
 {
-    public float roamingSpeed = 2f; // Speed when roaming
-    public float chaseSpeed = 4f; // Speed when chasing the player
-    public float attackRange = 1f; // Range within which the enemy can attack
-    public int maxHits = 3; // Number of hits to kill the player
-    public MazeGenerator mazeGenerator; // Reference to MazeGenerator
-    public GameObject enemyPrefab; // Assign the prefab of the enemy
-    public float cellSize = 1f; // Match your cell size
-    private Transform player; // Reference to the player transform
+    public float roamingSpeed = 2f;
+    public float chaseSpeed = 4f;
+    public float attackRange = 1f;
+    public float damageInterval = 15f;
+    public int damageAmount = 1;
+    public MazeGenerator mazeGenerator;
+    public GameObject enemyPrefab;
+    public float cellSize = 1f;
+    private Transform player;
     private Animator animator;
-    private int currentHits = 0; // Counter for hits on the player
-    private Vector3 targetPosition; // Target position for roaming
-    private bool isChasing = false; // Flag for chasing state
-    private float spawnTimer = 30f; // Time between enemy spawns
-    private float timeSinceLastSpawn = 0f; // Time since the last enemy spawned
-    private float spawnSpeedIncrease = 1f; // Speed increase for each new enemy
-    private float currentRoamingSpeed; // Current roaming speed
-    private float currentChaseSpeed; // Current chase speed
+    private Vector3 targetPosition;
+    private bool isChasing = false;
+    private float timeSinceLastDamage = 0f;
+    private float spawnTimer = 30f;
+    private float timeSinceLastSpawn = 0f;
+    private float spawnSpeedIncrease = 1f;
+    private float currentRoamingSpeed;
+    private float currentChaseSpeed;
 
+    private bool isAttacking = false; // Flag to prevent continuous damage
+    void OnCollisionEnter(Collision collision) // Or OnTriggerEnter(Collider other) if it's a trigger
+    {
+        if (collision.gameObject.CompareTag("Player")) // Or if (other.CompareTag("Player")) if using OnTriggerEnter
+        {
+            PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
+            if (playerHealth != null && !playerHealth.isDead)
+            {
+                playerHealth.TakeDamage(damageAmount);
+            }
+        }
+    }
+
+    IEnumerator AttackPlayer()
+    {
+        isAttacking = true;
+        PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+        if (playerHealth != null && !playerHealth.isDead)
+        {
+            playerHealth.TakeDamage(damageAmount);
+        }
+        yield return new WaitForSeconds(damageInterval);
+        isAttacking = false;
+    }
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -49,6 +72,12 @@ public class EnemyAI : MonoBehaviour
         {
             Roam();
         }
+
+        // Check for player proximity and deal damage
+        if (isChasing && Vector3.Distance(transform.position, player.position) < attackRange)
+        {
+            DealDamageToPlayer();
+        }
     }
 
     void SetRandomRoamingPosition()
@@ -70,8 +99,7 @@ public class EnemyAI : MonoBehaviour
             SetRandomRoamingPosition();
         }
 
-        // Check for player proximity
-        if (Vector3.Distance(transform.position, player.position) < 5f) // Adjust detection range
+        if (Vector3.Distance(transform.position, player.position) < 5f)
         {
             isChasing = true;
         }
@@ -81,44 +109,29 @@ public class EnemyAI : MonoBehaviour
     {
         animator.SetBool("isRoaming", false);
         animator.SetBool("isPlayerSpotted", true);
-        animator.SetBool("isAttacking", false);
+        animator.SetBool("isAttacking", false); // No longer needed for this damage system
 
         transform.position = Vector3.MoveTowards(transform.position, player.position, currentChaseSpeed * Time.deltaTime);
 
-        if (Vector3.Distance(transform.position, player.position) < attackRange)
-        {
-            AttackPlayer();
-        }
-
-        if (Vector3.Distance(transform.position, player.position) > 10f) // Adjust distance to stop chasing
+        if (Vector3.Distance(transform.position, player.position) > 10f)
         {
             isChasing = false;
             SetRandomRoamingPosition();
         }
     }
 
-    void AttackPlayer()
+    void DealDamageToPlayer()
     {
-        animator.SetBool("isAttacking", true);
-
-        // Simulate attack
-        currentHits++;
-        if (currentHits >= maxHits)
+        timeSinceLastDamage += Time.deltaTime;
+        if (timeSinceLastDamage >= damageInterval)
         {
-            // Logic for player death
-            Debug.Log("Player has been killed!");
-            // You can implement player death logic here
+            timeSinceLastDamage = 0f;
+            PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
+            if (playerHealth != null && !playerHealth.isDead)
+            {
+                playerHealth.TakeDamage(damageAmount);
+            }
         }
-
-        // Reset after attack
-        StartCoroutine(WaitBeforeNextAttack());
-    }
-
-    IEnumerator WaitBeforeNextAttack()
-    {
-        yield return new WaitForSeconds(1f); // Wait for a second before allowing another attack
-        currentHits = 0; // Reset hit counter after the attack
-        animator.SetBool("isAttacking", false);
     }
 
     Vector2Int GetRandomValidCell()

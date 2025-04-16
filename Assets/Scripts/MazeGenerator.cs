@@ -6,9 +6,7 @@ public class MazeGenerator : MonoBehaviour
     public int mazeWidth = 10;
     public int mazeHeight = 10;
     public MazeCell[,] maze;
-
     public enum Direction { Up, Down, Left, Right }
-
     [Range(0f, 1f)]
     public float loopProbability = 0.1f; // Probability of creating a loop
     [Range(0f, 1f)]
@@ -17,13 +15,10 @@ public class MazeGenerator : MonoBehaviour
 
     void Awake()
     {
-        GenerateMaze();
+        GenerateMaze(); // Generate the maze only once in Awake()
     }
 
-    void Start()
-    {
-        maze = GenerateMaze();
-    }
+    // Remove the duplicate GenerateMaze() call from Start()
 
     Vector2Int DirectionToVector(Direction dir)
     {
@@ -117,7 +112,6 @@ public class MazeGenerator : MonoBehaviour
             List<Direction> unvisitedNeighbors = GetUnvisitedNeighbors(current.x, current.y);
             List<Direction> allNeighbors = GetAllNeighbors(current.x, current.y);
 
-
             if (unvisitedNeighbors.Count > 0)
             {
                 Direction randomNeighbor = unvisitedNeighbors[Random.Range(0, unvisitedNeighbors.Count)];
@@ -145,7 +139,6 @@ public class MazeGenerator : MonoBehaviour
         RemoveRandomWalls();
     }
 
-
     public MazeCell[,] GenerateMaze()
     {
         maze = new MazeCell[mazeWidth, mazeHeight];
@@ -163,11 +156,6 @@ public class MazeGenerator : MonoBehaviour
     }
 
     [System.Serializable]
-
-
-
-
-
     public class MazeCell
     {
         public bool visited;
@@ -177,3 +165,4 @@ public class MazeGenerator : MonoBehaviour
         public bool rightWall = true;
     }
 }
+

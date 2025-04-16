@@ -34,11 +34,11 @@ public class MazeRenderer : MonoBehaviour
                     mazeCell.Init(top, bottom, left, right);
 
                     //Debug log for verification (remove later if not needed)
-                    Debug.Log($"Cell ({x}, {y}): Top={top}, Bottom={bottom}, Left={left}, Right={right}");
+                    //Debug.Log($"Cell ({x}, {y}): Top={top}, Bottom={bottom}, Left={left}, Right={right}");
                 }
                 else
                 {
-                    Debug.LogError($"Maze data is null at ({x}, {y})!");
+                   // Debug.LogError($"Maze data is null at ({x}, {y})!");
                 }
             }
         }

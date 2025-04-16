@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 3370482008633766844}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -175,7 +175,8 @@ MonoBehaviour:
   roamingSpeed: 2
   chaseSpeed: 4
   attackRange: 1
-  maxHits: 3
+  damageInterval: 15
+  damageAmount: 1
   mazeGenerator: {fileID: 0}
   enemyPrefab: {fileID: 5726429420187990754}
   cellSize: 1
