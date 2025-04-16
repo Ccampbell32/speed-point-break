@@ -13,7 +13,12 @@ public class MazeGenerator : MonoBehaviour
     public float loopProbability = 0.1f; // Probability of creating a loop
     [Range(0f, 1f)]
     public float wallRemovalProbability = 0.05f; // Probability of removing a wall
+    public bool isMazeReady = false;
 
+    void Awake()
+    {
+        GenerateMaze();
+    }
 
     void Start()
     {
@@ -153,6 +158,7 @@ public class MazeGenerator : MonoBehaviour
         }
 
         CarvePath(0, 0);
+        isMazeReady = true;
         return maze;
     }
 
